@@ -10,8 +10,8 @@ import org.jboss.processing.state.SingleIssueState;
 import org.jboss.query.IssueStatus;
 import org.jboss.query.SearchQuery;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 public class NewIssueCollector extends NewIssuesConsumer implements Executable<EveryIssueState> {
 
@@ -27,7 +27,7 @@ public class NewIssueCollector extends NewIssuesConsumer implements Executable<E
     }
 
     private static final class State {
-        List<SingleIssueState> issueStates = new CopyOnWriteArrayList<>();
+        List<SingleIssueState> issueStates = new ArrayList<>();
     }
 
     public static NewIssueCollector getInstance(JiraEndpoint jiraEndpoint) {
