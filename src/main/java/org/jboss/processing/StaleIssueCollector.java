@@ -40,7 +40,7 @@ public class StaleIssueCollector extends NewIssuesConsumer implements Executable
     }
 
     @Override
-    public void execute(LotteryConfig lotteryConfig) throws Exception {
+    public void execute() throws Exception {
         int issuesCount = doPoll();
         Log.infof("Found number of issues %d", issuesCount);
     }
