@@ -2,7 +2,7 @@ delay: P14D
 participants:
   - email: rbudinsk@redhat.com
     projects:
-      - project: WFLY
+      - project: NON_EXISTING
         components: [Logging]
         maxIssues: 5
   - email: mstefank@redhat.com
