@@ -90,17 +90,8 @@ oc create secret generic jira-lottery
 --from-literal=QUARKUS_MAILER_USERNAME={TBD}
 --from-literal=QUARKUS_MAILER_PASSWORD={TBD}
 ```
-3. Build the application, this step will eventually fail due to bug in quarkus
+3. Build and deploy the application
 > **_NOTE:_**  You can use script `deploy.sh` for convenience.
 ```shell
 ./mvnw clean package -Dquarkus.openshift.deploy=true
-```
-4. Update CronJob deployment
-```shell
-cd target/kubernetes
-```
-And in file `openshift.yml` delete the following line `selector: {}`
-5. Deploy the YAML file
-```shell
-oc apply -f openshift.yml
 ```
