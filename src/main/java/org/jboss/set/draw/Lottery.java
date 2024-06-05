@@ -22,9 +22,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.joining;
-
 @Unremovable
 @ApplicationScoped
 public class Lottery {
@@ -38,17 +35,14 @@ public class Lottery {
     private static final Pattern USERNAME_FROM_EMAIL = Pattern.compile("\\s*(\\b[a-zA-Z0-9._%+-]+)@");
     public static final String EMAIL_SUBJECT = "This week's lottery issues picked for %s";
     private static final String EMAIL_BODY = """
-            Hi %s,
-
-            your issues chosen for you by the JIRA lottery:
-
-            %s
-
-            If you would like to unsubscribe, please remove yourself from the following repository's configuration file <a href="%3$s">%3$s</a>
-
-            Jira issue lottery bot""";
-    private static final String PROJECT_LINE = "► <strong>%s</strong>\n";
-    private static final String LINK_LINE = "    • <a href=\"%1$s\">%1$s</a>\n";
+            <p>Hi %s,</p>
+            <p>Your issues chosen for you by the JIRA lottery:</p>
+            <p>%s</p>
+            <p>If you would like to unsubscribe, please remove yourself from the following repository's configuration file
+            <a href="%3$s">%3$s</a></p>
+            <p>Jira issue lottery bot</p>""";
+    private static final String PROJECT_LINE = "► <strong>%s</strong><br>\n";
+    private static final String LINK_LINE = "<li><a href=\"%1$s\">%1$s</a></li>";
 
     public void run(EveryIssueState collectedIssues) {
         LotteryConfig lotteryConfig = lotteryConfigProducer.getLotteryConfig();
@@ -98,16 +92,21 @@ public class Lottery {
     }
 
     public static String createEmailText(String email, List<Issue> issues) {
-        return EMAIL_BODY.formatted(getUsername(email),
-                // group by Project name
-                issues.stream().collect(groupingBy(Issue::getProject)).entrySet().stream()
-                        // write project and then collect all links with bullet point prepended
-                        .map(projectLinksEntry -> PROJECT_LINE.formatted(projectLinksEntry.getKey()) +
-                                projectLinksEntry.getValue().stream()
-                                        .map(issue -> LINK_LINE.formatted(issue.getBrowseUri().toString()))
-                                        .collect(Collectors.joining()))
-                        .collect(joining("\n")),
-                configFileUrl());
+        String projectHtml = issues.stream()
+                .collect(Collectors.groupingBy(Issue::getProject)).entrySet().stream()
+                .map(projectEntry -> {
+                    String projectName = projectEntry.getKey();
+                    List<Issue> projectIssues = projectEntry.getValue();
+
+                    String issueLinks = projectIssues.stream()
+                            .map(issue -> LINK_LINE.formatted(issue.getBrowseUri().toString()))
+                            .collect(Collectors.joining("\n"));
+
+                    return PROJECT_LINE.formatted(projectName) + "<ul>" + issueLinks + "</ul>";
+                })
+                .collect(Collectors.joining("\n"));
+
+        return EMAIL_BODY.formatted(getUsername(email), projectHtml, configFileUrl());
     }
 
     private static String configFileUrl() {
