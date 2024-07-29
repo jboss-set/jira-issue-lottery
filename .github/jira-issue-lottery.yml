@@ -1,16 +1,21 @@
 delay: P14D
 participants:
-  - email: rbudinsk@redhat.com
-    projects:
-      - project: WFLY
-        components: [Logging]
-        maxIssues: 5
-  - email: mstefank@redhat.com
+  - email: pberan@redhat.com
     projects:
       - project: WFLY
         maxIssues: 10
       - project: WFCORE
         maxIssues: 10
-      - project: JBTM
+  - email: khermano@redhat.com
+    projects:
+      - project: WFLY
+        maxIssues: 10
+      - project: WFCORE
+        maxIssues: 10
+  - email: mjusko@redhat.com
+    projects:
+      - project: WFLY
+        maxIssues: 10
+      - project: WFCORE
         maxIssues: 10
 
